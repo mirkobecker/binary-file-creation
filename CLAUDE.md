@@ -30,6 +30,15 @@ All identifiers, comments, commit messages, and documentation are written in **E
 | `test`    | Build and run all tests                       |
 | `clean`   | Remove all build artefacts                    |
 
+## Development Process
+
+Follow **Test-Driven Development (TDD)**:
+1. Write a failing test first
+2. Write the minimal production code to make it pass
+3. Refactor if needed, keeping tests green
+
+Never write implementation code without a corresponding test written beforehand.
+
 ## Test Strategy
 
 - **Unit tests** (Unity): argument parsing, CRC calculation, serial number encoding, MAC validation
