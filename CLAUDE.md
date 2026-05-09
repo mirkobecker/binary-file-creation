@@ -24,6 +24,7 @@ All public functions get a Doxygen header with `@brief`, `@param`, and `@return`
 - All error messages → `stderr`
 - Exit `EXIT_FAILURE` (1) on any error; no output file is written
 - Exit `EXIT_SUCCESS` (0) on success
+- All user-facing error messages are written in `main.c`
 
 ## Build
 
