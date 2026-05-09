@@ -11,7 +11,8 @@ All identifiers, comments, commit messages, and documentation are written in **E
 - **Argument parsing:** Direct `argc`/`argv` — no `getopt`; 5 positional args only
 - **CRC-16/CCITT:** Custom implementation — Init=`0xFFFF`, Poly=`0x1021`
 - **Test framework:** Unity — vendored at `tests/unity/` (`unity.c`, `unity.h`, `unity_internals.h`); do not use a submodule or download script
-- **Dev environment:** `.devcontainer/Dockerfile` (base `mcr.microsoft.com/devcontainers/cpp:1-bookworm`) + `devcontainer.json`
+- **Dev environment:** `.devcontainer/Dockerfile` (base `mcr.microsoft.com/devcontainers/cpp:ubuntu`) + `devcontainer.json`
+- **Code style:** `.clang-format` (LLVM-based, indent=8, Linux braces, column=100) — run `clang-format -i` before committing
 
 ## Documentation
 
