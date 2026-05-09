@@ -9,8 +9,6 @@ All identifiers, comments, commit messages, and documentation are written in **E
 ## Implementation Decisions
 
 - **Argument parsing:** Direct `argc`/`argv` — no `getopt`; 5 positional args only
-- **Endianness:** `htons()`/`htonl()` — no custom byte-swap
-  - Linux: `<arpa/inet.h>` · Windows: `<winsock2.h>`
 - **CRC-16/CCITT:** Custom implementation — Init=`0xFFFF`, Poly=`0x1021`
 - **Test framework:** Unity — vendored at `tests/unity/` (`unity.c`, `unity.h`, `unity_internals.h`); do not use a submodule or download script
 - **Dev environment:** `.devcontainer/Dockerfile` (base `mcr.microsoft.com/devcontainers/cpp:1-bookworm`) + `devcontainer.json`
