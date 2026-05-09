@@ -15,6 +15,10 @@ All identifiers, comments, commit messages, and documentation are written in **E
 - **Test framework:** Unity — vendored at `tests/unity/` (`unity.c`, `unity.h`, `unity_internals.h`); do not use a submodule or download script
 - **Dev environment:** `.devcontainer/Dockerfile` (base `mcr.microsoft.com/devcontainers/cpp:1-bookworm`) + `devcontainer.json`
 
+## Documentation
+
+All public functions get a Doxygen header with `@brief`, `@param`, and `@return`.
+
 ## Error Handling
 
 - All error messages → `stderr`
