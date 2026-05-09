@@ -4,11 +4,11 @@
 #include <stdint.h>
 
 typedef enum {
-    MAC_OK = 0,
-    MAC_ERR_NULL,
-    MAC_ERR_LENGTH,
-    MAC_ERR_CHAR,
-    MAC_ERR_BROADCAST,
+	MAC_OK = 0,
+	MAC_ERR_NULL,
+	MAC_ERR_LENGTH,
+	MAC_ERR_CHAR,
+	MAC_ERR_BROADCAST,
 } mac_err_t;
 
 /**
