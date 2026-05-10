@@ -2,6 +2,7 @@
 
 void run_crc_tests(void);
 void run_binary_tests(void);
+void run_serial_number_tests(void);
 
 void setUp(void)
 {
@@ -15,5 +16,6 @@ int main(void)
 	UNITY_BEGIN();
 	run_crc_tests();
 	run_binary_tests();
+	run_serial_number_tests();
 	return UNITY_END();
 }
