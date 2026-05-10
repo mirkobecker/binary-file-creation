@@ -1,27 +1,16 @@
 #include "binary.h"
+#include "binary_layout.h"
 #include "crc.h"
 #include <stddef.h>
 #include <string.h>
 
-#define SIZE_MAC    6u
-#define SIZE_VER    2u
-#define SIZE_SN     5u
-#define VALID_DATA_BYTES (SIZE_MAC + SIZE_MAC + SIZE_VER + SIZE_VER + SIZE_SN)
+#define SIG_BYTES "WREC"
 
-#define OFFSET_HEADER_HCHK 0x00u
-#define OFFSET_HEADER_SIG  0x02u
-#define OFFSET_HEADER_DCHK 0x08u
-#define OFFSET_HEADER_SIZE 0x10u
-#define OFFSET_HEADER_DATA 0x18u
-
-#define SIZE_HEADER (OFFSET_HEADER_DATA)
-#define SIZE_DATA   1000u
-
-#define OFFSET_DATA_MAC1  0u
-#define OFFSET_DATA_MAC2  (OFFSET_DATA_MAC1 + SIZE_MAC)
-#define OFFSET_DATA_MAJOR (OFFSET_DATA_MAC2 + SIZE_MAC)
-#define OFFSET_DATA_MINOR (OFFSET_DATA_MAJOR + SIZE_VER)
-#define OFFSET_DATA_SN    (OFFSET_DATA_MINOR + SIZE_VER)
+static void write_u16_be(uint8_t *buf, uint16_t val)
+{
+	buf[0] = (uint8_t)(val >> 8);
+	buf[1] = (uint8_t)(val & 0xFF);
+}
 
 static int hex_nibble(char c)
 {
@@ -119,8 +108,7 @@ sn_err_t parse_serial_number(const char *str, uint8_t sn[5])
 	sn[0] = (uint8_t)year;
 	sn[1] = (uint8_t)month;
 	sn[2] = (uint8_t)type;
-	sn[3] = (uint8_t)(seq >> 8);
-	sn[4] = (uint8_t)(seq & 0xFF);
+	write_u16_be(sn + 3, seq);
 	return SN_OK;
 }
 
@@ -134,26 +122,18 @@ void build_binary(const uint8_t mac1[6], const uint8_t mac2[6], uint16_t major, 
 
 	memcpy(data + OFFSET_DATA_MAC1, mac1, SIZE_MAC);
 	memcpy(data + OFFSET_DATA_MAC2, mac2, SIZE_MAC);
-	data[OFFSET_DATA_MAJOR] = (uint8_t)(major >> 8);
-	data[OFFSET_DATA_MAJOR + 1] = (uint8_t)(major & 0xFF);
-	data[OFFSET_DATA_MINOR] = (uint8_t)(minor >> 8);
-	data[OFFSET_DATA_MINOR + 1] = (uint8_t)(minor & 0xFF);
+	write_u16_be(data + OFFSET_DATA_MAJOR, major);
+	write_u16_be(data + OFFSET_DATA_MINOR, minor);
 	memcpy(data + OFFSET_DATA_SN, sn, SIZE_SN);
 
 	uint16_t dchk = crc16_ccitt(data, SIZE_DATA);
 
-	buf[OFFSET_HEADER_SIG + 0] = 'W';
-	buf[OFFSET_HEADER_SIG + 1] = 'R';
-	buf[OFFSET_HEADER_SIG + 2] = 'E';
-	buf[OFFSET_HEADER_SIG + 3] = 'C';
-	buf[OFFSET_HEADER_DCHK] = (uint8_t)(dchk >> 8);
-	buf[OFFSET_HEADER_DCHK + 1] = (uint8_t)(dchk & 0xFF);
-	buf[OFFSET_HEADER_SIZE] = 0x00;
-	buf[OFFSET_HEADER_SIZE + 1] = VALID_DATA_BYTES;
+	memcpy(buf + OFFSET_HEADER_SIG, SIG_BYTES, SIZE_SIG);
+	write_u16_be(buf + OFFSET_HEADER_DCHK, dchk);
+	write_u16_be(buf + OFFSET_HEADER_SIZE, VALID_DATA_BYTES);
 
 	uint16_t hchk = crc16_ccitt(buf + OFFSET_HEADER_SIG, SIZE_HEADER - OFFSET_HEADER_SIG);
-	buf[OFFSET_HEADER_HCHK] = (uint8_t)(hchk >> 8);
-	buf[OFFSET_HEADER_HCHK + 1] = (uint8_t)(hchk & 0xFF);
+	write_u16_be(buf + OFFSET_HEADER_HCHK, hchk);
 }
 
 mac_err_t parse_mac(const char *str, uint8_t mac[6])
@@ -176,7 +156,7 @@ mac_err_t parse_mac(const char *str, uint8_t mac[6])
 	}
 
 	static const uint8_t broadcast[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
-	if (memcmp(tmp, broadcast, 6) == 0) {
+	if (memcmp(tmp, broadcast, SIZE_MAC) == 0) {
 		return MAC_ERR_BROADCAST;
 	}
 
