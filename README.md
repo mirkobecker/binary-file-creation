@@ -37,6 +37,10 @@ All parameters are required. On any error the program prints a message to `stder
 | K    | 2018 |      |      |
 | L    | 2019 |      |      |
 
+> **Note:** `W` and `X` each encode two years (2008/2028 and 2009/2029).
+> The current implementation interprets `W` as 2008 and `X` as 2009;
+> 2028/2029 require a spec change.
+
 **Month** (1 char): `1`=Jan `2`=Feb `3`=Mar `4`=Apr `5`=May `6`=Jun `7`=Jul `8`=Aug `9`=Sep `A`=Oct `B`=Nov `C`=Dec
 
 **Device type** (1 char): `4`=Typ1 `5`=Typ2 `6`=Typ3 `7`=Typ4 `8`=Typ5 `9`=Typ6 `A`=Typ7

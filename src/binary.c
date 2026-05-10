@@ -23,7 +23,7 @@ static int hex_nibble(char c)
 	return -1;
 }
 
-/* Maps year character to (year - 2000). First occurrence of W/X wins (2008/2009). */
+/* Maps year character to (year - 2000). W=2008, X=2009; 2028/2029 unsupported. */
 static int parse_year(char c)
 {
 	static const struct {
@@ -33,7 +33,7 @@ static int parse_year(char c)
 		{'W', 8},  {'X', 9},  {'A', 10}, {'B', 11}, {'C', 12}, {'D', 13},
 		{'E', 14}, {'F', 15}, {'H', 16}, {'J', 17}, {'K', 18}, {'L', 19},
 		{'M', 20}, {'N', 21}, {'P', 22}, {'R', 23}, {'S', 24}, {'T', 25},
-		{'U', 26}, {'V', 27}, {'W', 28}, {'X', 29},
+		{'U', 26}, {'V', 27},
 	};
 	for (size_t i = 0; i < sizeof(table) / sizeof(table[0]); i++) {
 		if (table[i].ch == c) {
