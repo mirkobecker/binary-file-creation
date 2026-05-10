@@ -55,10 +55,28 @@ check_fails "MAC2 invalid chars"                          00157E33AAFF 00157EGGA
 check_fails "MAC2 broadcast"                              00157E33AAFF FFFFFFFFFFFF X550008 09 04
 check_fails "serial too short"                            00157E33AAFF 00157E33AB00 X5500 09 04
 check_fails "serial too long"                             00157E33AAFF 00157E33AB00 X5500089 09 04
+check_fails "serial invalid year char"                    00157E33AAFF 00157E33AB00 G550008 09 04
+check_fails "serial invalid month char"                   00157E33AAFF 00157E33AB00 XD50008 09 04
+check_fails "serial invalid type char"                    00157E33AAFF 00157E33AB00 X5X0008 09 04
+check_fails "serial invalid seq non-digit"                00157E33AAFF 00157E33AB00 X550X08 09 04
 check_fails "major non-digit"                             00157E33AAFF 00157E33AB00 X550008 9X 04
 check_fails "major too long"                              00157E33AAFF 00157E33AB00 X550008 009 04
 check_fails "minor non-digit"                             00157E33AAFF 00157E33AB00 X550008 09 0X
 check_fails "minor too long"                              00157E33AAFF 00157E33AB00 X550008 09 004
+
+# --- File-write error: fopen blocked by a pre-existing directory ---
+# Placing a directory at output.bin forces fopen("output.bin","wb") to fail.
+# The program must exit non-zero and must not leave a regular file behind.
+rm -f "$OUTPUT"
+mkdir -p "$OUTPUT"
+if "$BINARY" 00157E33AAFF 00157E33AB00 X550008 09 04 2>/dev/null; then
+        fail "fopen blocked: program must exit non-zero on write error"
+elif [ -f "$OUTPUT" ]; then
+        fail "fopen blocked: output.bin must not exist as a file on error"
+else
+        pass "fopen blocked: no output file left on write error"
+fi
+rmdir "$OUTPUT" 2>/dev/null || true
 
 # --- Happy path ---
 

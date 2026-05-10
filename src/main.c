@@ -94,6 +94,7 @@ int main(int argc, char *argv[])
 	}
 	if (fwrite(buf, 1, sizeof(buf), f) != sizeof(buf)) {
 		fclose(f);
+		remove("output.bin");
 		fprintf(stderr, "Error: failed to write output.bin.\n");
 		return EXIT_FAILURE;
 	}
