@@ -90,9 +90,10 @@ Produces `output.bin`: MAC1=`00:15:7E:33:AA:FF`, MAC2=`00:15:7E:33:AB:00`, versi
 
 Requires GCC. Windows cross-compilation requires mingw-w64.
 
-| Command        | Description                                   |
-|----------------|-----------------------------------------------|
-| `make`         | Build the Linux binary (`create_binary_file`) |
-| `make windows` | Cross-compile for Windows                     |
-| `make test`    | Build and run all tests                       |
-| `make clean`   | Remove all build artefacts                    |
+| Command                  | Description                                        |
+|--------------------------|----------------------------------------------------|
+| `make`                   | Build the Linux binary (`create_binary_file`)      |
+| `make windows`           | Cross-compile for Windows                          |
+| `make test`              | Build and run unit tests + integration tests       |
+| `make integration-test`  | Run integration tests only (binary must be built)  |
+| `make clean`             | Remove all build artefacts                         |
