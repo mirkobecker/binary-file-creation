@@ -21,6 +21,13 @@ typedef enum {
 	SN_ERR_SEQ,
 } sn_err_t;
 
+typedef enum {
+	VER_OK = 0,
+	VER_ERR_NULL,
+	VER_ERR_LENGTH,
+	VER_ERR_CHAR,
+} ver_err_t;
+
 /**
  * @brief Parse and validate a 7-character serial number string.
  *
@@ -36,6 +43,17 @@ typedef enum {
  * @return     SN_OK on success, or a specific SN_ERR_* code on failure.
  */
 sn_err_t parse_serial_number(const char *str, uint8_t sn[5]);
+
+/**
+ * @brief Parse a 2-digit decimal version string into a uint16.
+ *
+ * Accepts exactly 2 decimal digit characters [0-9].
+ *
+ * @param str  Exactly 2 decimal digit characters.
+ * @param out  Parsed value on success; unchanged on error.
+ * @return     VER_OK on success, or a specific VER_ERR_* code on failure.
+ */
+ver_err_t parse_version(const char *str, uint16_t *out);
 
 /**
  * @brief Parse and validate a MAC address string.

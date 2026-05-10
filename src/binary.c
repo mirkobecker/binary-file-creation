@@ -73,6 +73,21 @@ static int parse_type(char c)
 	return -1;
 }
 
+ver_err_t parse_version(const char *str, uint16_t *out)
+{
+	if (str == NULL) {
+		return VER_ERR_NULL;
+	}
+	if (strlen(str) != 2) {
+		return VER_ERR_LENGTH;
+	}
+	if (str[0] < '0' || str[0] > '9' || str[1] < '0' || str[1] > '9') {
+		return VER_ERR_CHAR;
+	}
+	*out = (uint16_t)((str[0] - '0') * 10 + (str[1] - '0'));
+	return VER_OK;
+}
+
 sn_err_t parse_serial_number(const char *str, uint8_t sn[5])
 {
 	if (str == NULL) {
