@@ -158,7 +158,7 @@ mac_err_t parse_mac(const char *str, uint8_t mac[6])
 void build_binary(const uint8_t mac1[6], const uint8_t mac2[6], uint16_t major, uint16_t minor,
 		  const uint8_t sn[5], uint8_t buf[1024])
 {
-	memset(buf, 0, SIZE_HEADER + SIZE_DATA);
+	memset(buf, 0, SIZE_TOTAL);
 
 	/* Data area is filled first: DCHK and HCHK depend on its final content. */
 	uint8_t *data = buf + OFFSET_HEADER_DATA;
