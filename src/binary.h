@@ -49,4 +49,23 @@ sn_err_t parse_serial_number(const char *str, uint8_t sn[5]);
  */
 mac_err_t parse_mac(const char *str, uint8_t mac[6]);
 
+/**
+ * @brief Assemble the 1024-byte binary blob from validated field values.
+ *
+ * Layout: 24-byte header followed by a 1000-byte data area.
+ * Header fields (big-endian): HCHK at 0x00, signature 'WREC' at 0x02,
+ * DCHK at 0x08, valid-byte count (21) at 0x10.  All reserved bytes are 0x00.
+ * Data area fields (big-endian): MAC1 at +0x00, MAC2 at +0x06,
+ * major at +0x0C, minor at +0x0E, serial number at +0x10.
+ *
+ * @param mac1   6 decoded MAC address bytes for the first interface.
+ * @param mac2   6 decoded MAC address bytes for the second interface.
+ * @param major  Major version (uint16, stored big-endian).
+ * @param minor  Minor version (uint16, stored big-endian).
+ * @param sn     5 decoded serial number bytes.
+ * @param buf    Output buffer of exactly 1024 bytes; fully overwritten.
+ */
+void build_binary(const uint8_t mac1[6], const uint8_t mac2[6], uint16_t major, uint16_t minor,
+		  const uint8_t sn[5], uint8_t buf[1024]);
+
 #endif /* BINARY_H */
