@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+    tags: ["v*"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y gcc libasan8 libubsan1
+
+      - name: Build
+        run: make all
+
+      - name: Unit tests
+        run: make test
+
+      - name: Integration tests
+        run: make integration-test
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y gcc gcc-mingw-w64-x86-64
+
+      - name: Build Linux + Windows
+        run: make all windows
+
+      - name: Create release
+        run: |
+          gh release create "${{ github.ref_name }}" \
+            build/create_binary_file \
+            build/create_binary_file.exe
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
