@@ -2,11 +2,26 @@
 
 Creates a 1024-byte binary configuration blob for embedded network devices.
 
-```
+> On any error the program prints a message to `stderr`, exits with code `1`, and writes no output file.
+
+## Quick Start
+
+```sh
 create_binary_file <MAC1> <MAC2> <SerialNumber> <Major> <Minor>
 ```
 
-All parameters are required. On any error the program prints a message to `stderr`, exits with code `1`, and writes no output file.
+All parameters are required.
+
+**Example:**
+
+```sh
+create_binary_file 00157E33AAFF 00157E33AB00 X550008 09 04
+```
+
+Output file: `output.bin`
+
+Contents: MAC1=`00:15:7E:33:AA:FF`, MAC2=`00:15:7E:33:AB:00`, version=9.4,
+serial number encodes year=2009, month=May, type=Typ2, seq=8.
 
 ## Input Parameters
 
@@ -18,7 +33,16 @@ All parameters are required. On any error the program prints a message to `stder
 
 ### SerialNumber
 
-7 characters: `<Year><Month><Type><NNNN>`
+7 characters in the format `<Year><Month><Type><NNNN>`:
+
+```mermaid
+packet-beta
+title Serial number (7 characters)
+0-0: "Year"
+1-1: "Month"
+2-2: "Type"
+3-6: "Seq"
+```
 
 **Year** (1 char):
 
@@ -54,12 +78,24 @@ Example: `AA41234` → A=2010, A=Oct, 4=Typ1, seq=1234
 - 2 decimal digits `[00-99]`
 - Example: `09`, `04`
 
-## Output File: `output.bin`
+## Output File Layout
 
 Total size: **1024 bytes** = 24-byte header + 1000-byte data area.
 All multi-byte values in **big-endian** byte order.
 
 ### Header (bytes 0x00–0x17)
+
+```mermaid
+packet-beta
+title Header — 24 bytes (0x00–0x17)
+0-1: "HCHK"
+2-5: "SIG"
+6-7: "Res"
+8-9: "DCHK"
+10-15: "Res"
+16-17: "Size"
+18-23: "Res"
+```
 
 | Offset | Size | Field | Description |
 |--------|------|-------|-------------|
@@ -73,6 +109,16 @@ All multi-byte values in **big-endian** byte order.
 
 ### Data area (bytes 0x18–0x3FF, offsets relative to 0x18)
 
+```mermaid
+packet-beta
+title Data area — valid fields (bytes 0x18 + offset)
+0-5: "MAC1"
+6-11: "MAC2"
+12-13: "MAJOR"
+14-15: "MINOR"
+16-20: "SN"
+```
+
 | Offset | Size | Field | Description |
 |--------|------|-------|-------------|
 | 0x00   | 6    | MAC1  | MAC1 bytes |
@@ -82,17 +128,10 @@ All multi-byte values in **big-endian** byte order.
 | 0x10   | 5    | SN    | Serial number: `[0]` year (year−2000), `[1]` month (1–12), `[2]` device type (1–7), `[3–4]` continuous number (uint16) |
 | 0x15   | 975  | Res   | Reserved (`0x00`) |
 
-## Example
-
-```sh
-create_binary_file 00157E33AAFF 00157E33AB00 X550008 09 04
-```
-
-Produces `output.bin`: MAC1=`00:15:7E:33:AA:FF`, MAC2=`00:15:7E:33:AB:00`, version=9.4, SN encodes year=2009, month=May, type=Typ2, seq=8.
-
 ## Build
 
-Requires GCC. Windows cross-compilation requires mingw-w64.
+**Prerequisites:** `gcc` (Linux/macOS). Windows cross-compilation requires `mingw-w64`
+(`sudo apt install gcc-mingw-w64-x86-64` on Ubuntu).
 
 | Command                  | Description                                        |
 |--------------------------|----------------------------------------------------|
