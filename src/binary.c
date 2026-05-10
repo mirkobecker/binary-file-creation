@@ -112,30 +112,6 @@ sn_err_t parse_serial_number(const char *str, uint8_t sn[5])
 	return SN_OK;
 }
 
-void build_binary(const uint8_t mac1[6], const uint8_t mac2[6], uint16_t major, uint16_t minor,
-		  const uint8_t sn[5], uint8_t buf[1024])
-{
-	memset(buf, 0, SIZE_HEADER + SIZE_DATA);
-
-	/* Data area is filled first: DCHK and HCHK depend on its final content. */
-	uint8_t *data = buf + OFFSET_HEADER_DATA;
-
-	memcpy(data + OFFSET_DATA_MAC1, mac1, SIZE_MAC);
-	memcpy(data + OFFSET_DATA_MAC2, mac2, SIZE_MAC);
-	write_u16_be(data + OFFSET_DATA_MAJOR, major);
-	write_u16_be(data + OFFSET_DATA_MINOR, minor);
-	memcpy(data + OFFSET_DATA_SN, sn, SIZE_SN);
-
-	uint16_t dchk = crc16_ccitt(data, SIZE_DATA);
-
-	memcpy(buf + OFFSET_HEADER_SIG, SIG_BYTES, SIZE_SIG);
-	write_u16_be(buf + OFFSET_HEADER_DCHK, dchk);
-	write_u16_be(buf + OFFSET_HEADER_SIZE, VALID_DATA_BYTES);
-
-	uint16_t hchk = crc16_ccitt(buf + OFFSET_HEADER_SIG, SIZE_HEADER - OFFSET_HEADER_SIG);
-	write_u16_be(buf + OFFSET_HEADER_HCHK, hchk);
-}
-
 mac_err_t parse_mac(const char *str, uint8_t mac[6])
 {
 	if (str == NULL) {
@@ -162,4 +138,28 @@ mac_err_t parse_mac(const char *str, uint8_t mac[6])
 
 	memcpy(mac, tmp, 6);
 	return MAC_OK;
+}
+
+void build_binary(const uint8_t mac1[6], const uint8_t mac2[6], uint16_t major, uint16_t minor,
+		  const uint8_t sn[5], uint8_t buf[1024])
+{
+	memset(buf, 0, SIZE_HEADER + SIZE_DATA);
+
+	/* Data area is filled first: DCHK and HCHK depend on its final content. */
+	uint8_t *data = buf + OFFSET_HEADER_DATA;
+
+	memcpy(data + OFFSET_DATA_MAC1, mac1, SIZE_MAC);
+	memcpy(data + OFFSET_DATA_MAC2, mac2, SIZE_MAC);
+	write_u16_be(data + OFFSET_DATA_MAJOR, major);
+	write_u16_be(data + OFFSET_DATA_MINOR, minor);
+	memcpy(data + OFFSET_DATA_SN, sn, SIZE_SN);
+
+	uint16_t dchk = crc16_ccitt(data, SIZE_DATA);
+
+	memcpy(buf + OFFSET_HEADER_SIG, SIG_BYTES, SIZE_SIG);
+	write_u16_be(buf + OFFSET_HEADER_DCHK, dchk);
+	write_u16_be(buf + OFFSET_HEADER_SIZE, VALID_DATA_BYTES);
+
+	uint16_t hchk = crc16_ccitt(buf + OFFSET_HEADER_SIG, SIZE_HEADER - OFFSET_HEADER_SIG);
+	write_u16_be(buf + OFFSET_HEADER_HCHK, hchk);
 }
