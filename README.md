@@ -35,15 +35,6 @@ serial number encodes year=2009, month=May, type=Typ2, seq=8.
 
 7 characters in the format `<Year><Month><Type><NNNN>`:
 
-```mermaid
-packet-beta
-title Serial number (7 characters)
-0-0: "Year"
-1-1: "Month"
-2-2: "Type"
-3-6: "Seq"
-```
-
 **Year** (1 char):
 
 | Char | Year | Char | Year |
@@ -85,18 +76,6 @@ All multi-byte values in **big-endian** byte order.
 
 ### Header (bytes 0x00–0x17)
 
-```mermaid
-packet-beta
-title Header — 24 bytes (0x00–0x17)
-0-1: "HCHK"
-2-5: "SIG"
-6-7: "Res"
-8-9: "DCHK"
-10-15: "Res"
-16-17: "Size"
-18-23: "Res"
-```
-
 | Offset | Size | Field | Description |
 |--------|------|-------|-------------|
 | 0x00   | 2    | HCHK  | CRC-16/CCITT over header bytes `[0x02..0x17]` |
@@ -107,26 +86,16 @@ title Header — 24 bytes (0x00–0x17)
 | 0x10   | 2    | Size  | Number of valid data bytes in the data area (`21`) |
 | 0x12   | 6    | Res   | Reserved (`0x00`) |
 
-### Data area (bytes 0x18–0x3FF, offsets relative to 0x18)
-
-```mermaid
-packet-beta
-title Data area — valid fields (bytes 0x18 + offset)
-0-5: "MAC1"
-6-11: "MAC2"
-12-13: "MAJOR"
-14-15: "MINOR"
-16-20: "SN"
-```
+### Data area (bytes 0x18–0x3FF)
 
 | Offset | Size | Field | Description |
 |--------|------|-------|-------------|
-| 0x00   | 6    | MAC1  | MAC1 bytes |
-| 0x06   | 6    | MAC2  | MAC2 bytes |
-| 0x0C   | 2    | MAJOR | Major version |
-| 0x0E   | 2    | MINOR | Minor version |
-| 0x10   | 5    | SN    | Serial number: `[0]` year (year−2000), `[1]` month (1–12), `[2]` device type (1–7), `[3–4]` continuous number (uint16) |
-| 0x15   | 975  | Res   | Reserved (`0x00`) |
+| 0x18   | 6    | MAC1  | MAC1 bytes |
+| 0x1E   | 6    | MAC2  | MAC2 bytes |
+| 0x24   | 2    | MAJOR | Major version |
+| 0x26   | 2    | MINOR | Minor version |
+| 0x28   | 5    | SN    | Serial number: `[0]` year (year−2000), `[1]` month (1–12), `[2]` device type (1–7), `[3–4]` continuous number (uint16) |
+| 0x2D   | 975  | Res   | Reserved (`0x00`) |
 
 ## Build
 
